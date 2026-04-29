@@ -7,6 +7,7 @@
 
 typedef struct {
     int x, y;
+    int velX, velY;
 } Snake;
 
 typedef struct {

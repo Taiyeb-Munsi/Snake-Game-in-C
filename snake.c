@@ -9,6 +9,8 @@ void init_game(Game* g) {
     g->win = newwin(WIN_H, WIN_W, 10, 10);
     g->snake.x = WIN_W/2;
     g->snake.y = WIN_H/2;
+
+    halfdelay(5);
 }
 
 void draw_game(Game* g) {
@@ -21,10 +23,27 @@ void draw_game(Game* g) {
 int update_position(Game* g, char ch) {
     if(ch == 'q') return 0;
 
-    if(ch == 'w' && g->snake.y > 1) --g->snake.y;
-    else if(ch == 's' && g->snake.y < WIN_H - 2) ++g->snake.y;
-    else if(ch == 'a' && g->snake.x > 1) --g->snake.x;
-    else if(ch == 'd' && g->snake.x < WIN_W - 2) ++g->snake.x;
+    if(ch == 'w' && g->snake.velY == 0) { 
+        g->snake.velY = -1;
+        g->snake.velX = 0;
+    } else if(ch == 's' && g->snake.velY == 0) {
+        g->snake.velY = 1;
+        g->snake.velX = 0;
+    } else if(ch == 'a' && g->snake.velX == 0) {
+        g->snake.velX = -1;
+        g->snake.velY = 0;
+    } else if(ch == 'd' && g->snake.velX == 0) {
+        g->snake.velX = 1;
+        g->snake.velY = 0;
+    }
     
+    g->snake.x += g->snake.velX;
+    g->snake.y += g->snake.velY;
+
+    if(g->snake.x < 1) g->snake.x = WIN_W-2;
+    if(g->snake.x > WIN_W-2) g->snake.x = 1;
+    if(g->snake.y < 1) g->snake.y = WIN_H-2;
+    if(g->snake.y > WIN_H-2) g->snake.y = 1;
+
     return 1;
 }
