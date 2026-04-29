@@ -1,2 +1,2 @@
 all:
-	gcc -lncurses main.c -o snake
+	gcc main.c snake.c -lncurses -o snake

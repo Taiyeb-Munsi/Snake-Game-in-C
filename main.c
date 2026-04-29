@@ -1,27 +1,14 @@
-#include <ncurses.h>
+#include "snake.h"
 
 int main() {
-    int x=2, y=2, winH=20, winW=80;
+    int run=1;
+    Game g;
+    init_game(&g);
 
-    initscr();
-    noecho();
-    curs_set(0);
-    
-    WINDOW* win = newwin(winH,winW,10,10);
-
-    while(1) {
-        werase(win);
-        mvwprintw(win, x, y, "S");
-        box(win,0,0);
-
-        wrefresh(win);
-        char ch = wgetch(win);
-
-        if(ch == 'w' && x > 1) --x;
-        else if(ch == 's' && x < winH-2) ++x;
-        else if(ch == 'a' && y > 1) --y;
-        else if(ch == 'd' && y < winW-2) ++y;
-        else if(ch == 'q') break;
+    while(run) {
+        draw_game(&g);
+        char ch = wgetch(g.win);
+        run = update_position(&g, ch);
     }
 
     endwin();
