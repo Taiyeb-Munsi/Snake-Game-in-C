@@ -8,7 +8,8 @@ int main() {
     while(run) {
         draw_game(&g);
         char ch = wgetch(g.win);
-        run = update_position(&g, ch);
+        for(int i=0;i<g.snake_length;++i)
+            run = update_position(&g, ch, i);
     }
 
     endwin();
