@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 #define WIN_H 20
-#define WIN_W 80
+#define WIN_W 50
 #define WIN_X 10
 #define WIN_Y 10
 #define MAX_L (WIN_H - 2) * (WIN_W - 2)
@@ -22,10 +22,11 @@ typedef struct {
     Snake snake[MAX_L];
     Food food, super_food;
     int snake_length, score, state;
+    const char *difficulty;
     //state = 0 : game running, = 1 : game lost, = 2 : game paused
 } Game;
 
-void init_game(Game*);
+void init_game(Game*, char*);
 void draw_game(Game*);
 void food_collision(Game*);
 void self_collision(Game*);

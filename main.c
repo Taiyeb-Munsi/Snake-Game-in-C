@@ -1,9 +1,13 @@
 #include "snake.h"
 
-int main() {
+int main(int argc, char* argv[]) {
     int run=1;
     Game g;
-    init_game(&g);
+    
+    if(argc < 2)
+        init_game(&g, "-e");
+    else if(argc >= 2)
+        init_game(&g, argv[1]);
 
     while(run) {
         draw_game(&g);

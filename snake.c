@@ -2,17 +2,19 @@
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
-void init_game(Game* g) {
+void init_game(Game* g, char *d) {
     initscr();
     noecho();
     curs_set(0);
     srand(time(NULL));
 
     g->win = newwin(WIN_H, WIN_W, WIN_Y, WIN_X);
-    g->snake_length = 12;
+    g->snake_length = 2;
     g->score = 0;
     g->state = 0;
+    g->difficulty = d;
 
     for(int i=0;i<g->snake_length;++i) {
         g->snake[i].x = (WIN_W/2)-i;
@@ -77,7 +79,7 @@ void self_collision(Game* g) {
 void restart(Game* g) {
     g->state = 0;
     g->score = 0;
-    g->snake_length = 1;
+    g->snake_length = 2;
     g->snake[0].x = WIN_W/2;
     g->snake[0].y = WIN_H/2;
     g->snake[0].velX = 1;
@@ -102,14 +104,19 @@ void update_position(Game* g, char ch) {;
     g->snake[0].x += g->snake[0].velX;
     g->snake[0].y += g->snake[0].velY;
 
-    if(g->snake[0].x < 1)
-        g->snake[0].x = WIN_W-2;
-    if(g->snake[0].x > WIN_W-2)
-        g->snake[0].x = 1;
-    if(g->snake[0].y < 1)
-        g->snake[0].y = WIN_H-2;
-    if(g->snake[0].y > WIN_H-2)
-        g->snake[0].y = 1;
+    if(!strcmp(g->difficulty, "-e")) {
+        if(g->snake[0].x < 1)
+            g->snake[0].x = WIN_W-2;
+        if(g->snake[0].x > WIN_W-2)
+            g->snake[0].x = 1;
+        if(g->snake[0].y < 1)
+            g->snake[0].y = WIN_H-2;
+        if(g->snake[0].y > WIN_H-2)
+            g->snake[0].y = 1;
+    } else if(!strcmp(g->difficulty, "-h")) {
+        if(g->snake[0].x < 1 || g->snake[0].x > WIN_W-2 || g->snake[0].y < 1 || g->snake[0].y > WIN_H-2)
+            g->state = 1;
+    }
 }
 
 void update_position_all(Game* g) {
