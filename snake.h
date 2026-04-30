@@ -25,6 +25,7 @@ typedef struct {
 void init_game(Game*);
 void draw_game(Game*);
 void food_collision(Game*);
-int update_position(Game*, char, int);
+int update_position(Game*, char);
+void update_position_all(Game*);
 
 #endif
