@@ -20,15 +20,17 @@ typedef struct {
 typedef struct {
     WINDOW* win;
     Snake snake[MAX_L];
-    Food food;
-    int snake_length;
-    int score;
+    Food food, super_food;
+    int snake_length, score, state;
+    //state = 0 : game running, = 1 : game lost, = 2 : game paused
 } Game;
 
 void init_game(Game*);
 void draw_game(Game*);
 void food_collision(Game*);
-int update_position(Game*, char);
+void self_collision(Game*);
+void restart(Game*);
+void update_position(Game*, char);
 void update_position_all(Game*);
 
 #endif
