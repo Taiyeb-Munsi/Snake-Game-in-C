@@ -3,7 +3,7 @@
 
 #include <ncurses.h>
 #define WIN_H 20
-#define WIN_W 50
+#define WIN_W 40
 #define WIN_X 10
 #define WIN_Y 10
 #define MAX_L (WIN_H - 2) * (WIN_W - 2)

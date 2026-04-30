@@ -4,6 +4,8 @@
 #include <time.h>
 #include <string.h>
 
+void generate_food(Game*);
+
 void init_game(Game* g, char *d) {
     initscr();
     noecho();
@@ -21,10 +23,10 @@ void init_game(Game* g, char *d) {
         g->snake[i].y = WIN_H/2;
 
         g->snake[i].velX = 1;
+        g->snake[i].velY = 0;
     }
 
-    g->food.x = rand()%(WIN_W-2)+1;
-    g->food.y = rand()%(WIN_H-2)+1;
+    generate_food(g);
 
     halfdelay(2);
 }
@@ -60,8 +62,7 @@ void food_collision(Game* g) {
         g->snake[g->snake_length - 1].velX = g->snake[g->snake_length - 2].velX;
         g->snake[g->snake_length - 1].velY = g->snake[g->snake_length - 2].velY;
         
-        g->food.x = rand()%(WIN_W-2)+1;
-        g->food.y = rand()%(WIN_H-2)+1;
+        generate_food(g);
 
         ++g->score;
     }
@@ -86,7 +87,30 @@ void restart(Game* g) {
     g->snake[0].velY = 0;
 }
 
-void update_position(Game* g, char ch) {;
+void generate_food(Game* g) {
+    int x, y, flag = 1;
+    while(1) {
+        flag = 1;
+
+        x = rand() % (WIN_W - 2) + 1;
+        y = rand() % (WIN_H - 2) + 1;
+
+        for(int i=0;i<g->snake_length;++i) {
+            if(x == g->snake[i].x && y == g->snake[i].y) {
+                flag = 0;
+                break;
+            }
+        }
+
+        if(flag) {
+            g->food.x = x;
+            g->food.y = y;
+            break;
+        }
+    }
+}
+
+void update_position(Game* g, char ch) {
     if(ch == 'w' && g->snake[0].velY == 0) { 
         g->snake[0].velY = -1;
         g->snake[0].velX = 0;
