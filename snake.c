@@ -9,8 +9,9 @@ void init_game(Game* g) {
     curs_set(0);
     srand(time(NULL));
 
-    g->win = newwin(WIN_H, WIN_W, 10, 10);
+    g->win = newwin(WIN_H, WIN_W, WIN_Y, WIN_X);
     g->snake_length = 1;
+    g->score = 0;
 
     for(int i=0;i<g->snake_length;++i) {
         g->snake[i].x = (WIN_W/2)-i;
@@ -33,6 +34,9 @@ void draw_game(Game* g) {
         mvwprintw(g->win, g->snake[i].y, g->snake[i].x, "S");
     
     box(g->win,0,0);
+
+    mvprintw(WIN_Y-1, WIN_X, " Score : %d ", g->score);
+    refresh();
     wrefresh(g->win);
 }
 
@@ -48,6 +52,8 @@ void food_collision(Game* g) {
         
         g->food.x = rand()%(WIN_W-2)+1;
         g->food.y = rand()%(WIN_H-2)+1;
+
+        ++g->score;
     }
 }
 
