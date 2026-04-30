@@ -12,13 +12,19 @@ typedef struct {
 } Snake;
 
 typedef struct {
+    int x, y;
+} Food;
+
+typedef struct {
     WINDOW* win;
     Snake snake[MAX_L];
+    Food food;
     int snake_length;
 } Game;
 
 void init_game(Game*);
 void draw_game(Game*);
+void food_collision(Game*);
 int update_position(Game*, char, int);
 
 #endif

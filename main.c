@@ -10,6 +10,7 @@ int main() {
         char ch = wgetch(g.win);
         for(int i=0;i<g.snake_length;++i)
             run = update_position(&g, ch, i);
+        food_collision(&g);
     }
 
     endwin();
