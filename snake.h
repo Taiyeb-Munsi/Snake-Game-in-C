@@ -8,7 +8,7 @@
 #define WIN_X 10
 #define WIN_Y 10
 #define MAX_L (WIN_H - 2) * (WIN_W - 2)
-#define TIME_CYClE 60
+#define TIME_CYClE 100
 
 typedef enum { FOOD_NORMAL, FOOD_SUPER } FoodType;
 
@@ -18,7 +18,7 @@ typedef struct {
 } Snake;
 
 typedef struct {
-    int x, y;
+    int x, y, status;
 } Food;
 
 typedef struct {
@@ -32,7 +32,7 @@ typedef struct {
 
 void init_game(Game*, char*);
 void draw_game(Game*);
-void food_collision(Game*);
+void food_collision(Game*, FoodType);
 void self_collision(Game*);
 void restart(Game*);
 void update_position(Game*, char);

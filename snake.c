@@ -17,6 +17,8 @@ void init_game(Game* g, char *d) {
     g->score = 0;
     g->state = 0;
     g->time = 0;
+    g->food.status = 0;
+    g->super_food.status = 0;
     g->difficulty = d;
 
     for(int i=0;i<g->snake_length;++i) {
@@ -27,14 +29,13 @@ void init_game(Game* g, char *d) {
         g->snake[i].velY = 0;
     }
 
-    generate_food(g, FOOD_NORMAL);
-
     halfdelay(2);
 }
 
 void draw_game(Game* g) {
     werase(g->win);
-    mvwprintw(g->win, g->food.y, g->food.x, "*");
+    if(g->food.status) mvwprintw(g->win, g->food.y, g->food.x, "*");
+    if(g->super_food.status) mvwprintw(g->win, g->super_food.y, g->super_food.x, "#");
     
     for(int i=0;i<g->snake_length;++i)
         if(i == 0)
@@ -46,19 +47,23 @@ void draw_game(Game* g) {
 
     mvprintw(WIN_Y-1, WIN_X+WIN_W-8, "       ");
     mvprintw(WIN_Y+WIN_H, WIN_X, "                   ");
-    mvprintw(WIN_Y-1, WIN_X, " Score : %d | Time : %d", g->score, g->time);
+    mvprintw(WIN_Y-1, WIN_X, " Score : %d | Time : %02d", g->score, g->time);
 
     if(g->state == 2) mvprintw(WIN_Y-1, WIN_X+WIN_W-8, " Paused");
     if(g->state == 1) mvprintw(WIN_Y+WIN_H, WIN_X, " Game lost, press R");
     
     refresh();
     wrefresh(g->win);
-    if(!g->state)
-        g->time = (g->time + 1) % TIME_CYClE;
+
+    if(!g->food.status) generate_food(g, FOOD_NORMAL);
+    if(!g->super_food.status && g->time == TIME_CYClE * 3/4) 
+        generate_food(g, FOOD_SUPER);
+    if(g->time == 0)
+        g->super_food.status = 0;
 }
 
-void food_collision(Game* g) {
-    if(g->snake[0].x == g->food.x && g->snake[0].y == g->food.y) {
+void food_collision(Game* g, FoodType type) {
+    if(type == FOOD_NORMAL && (g->snake[0].x == g->food.x && g->snake[0].y == g->food.y)) {
         ++(g->snake_length);
 
         g->snake[g->snake_length - 1].x = g->snake[g->snake_length - 2].x - g->snake[g->snake_length - 2].velX;
@@ -66,10 +71,13 @@ void food_collision(Game* g) {
 
         g->snake[g->snake_length - 1].velX = g->snake[g->snake_length - 2].velX;
         g->snake[g->snake_length - 1].velY = g->snake[g->snake_length - 2].velY;
-        
-        generate_food(g);
 
         ++g->score;
+
+        g->food.status = 0;
+    } else if(type == FOOD_SUPER && (g->snake[0].x == g->super_food.x && g->snake[0].y == g->super_food.y)) {
+        g->score += 5;
+        g->super_food.status = 0;
     }
 }
 
@@ -87,6 +95,8 @@ void restart(Game* g) {
     g->score = 0;
     g->time = 0;
     g->snake_length = 2;
+    g->super_food.status = 0;
+    g->food.status = 0;
     g->snake[0].x = WIN_W/2;
     g->snake[0].y = WIN_H/2;
     g->snake[0].velX = 1;
@@ -104,9 +114,11 @@ void generate_food(Game* g, FoodType type) {
             if(type == FOOD_NORMAL) {
                 g->food.x = x;
                 g->food.y = y;
-            } else {
+                g->food.status = 1;
+            } else if(type == FOOD_SUPER) {
                 g->super_food.x = x;
                 g->super_food.y = y;
+                g->super_food.status = 1;
             }
             break;
         }
