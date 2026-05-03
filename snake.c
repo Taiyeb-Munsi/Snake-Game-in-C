@@ -4,7 +4,7 @@
 #include <time.h>
 #include <string.h>
 
-void generate_food(Game*);
+void generate_food(Game*, FoodType);
 
 void init_game(Game* g, char *d) {
     initscr();
@@ -16,6 +16,7 @@ void init_game(Game* g, char *d) {
     g->snake_length = 2;
     g->score = 0;
     g->state = 0;
+    g->time = 0;
     g->difficulty = d;
 
     for(int i=0;i<g->snake_length;++i) {
@@ -26,7 +27,7 @@ void init_game(Game* g, char *d) {
         g->snake[i].velY = 0;
     }
 
-    generate_food(g);
+    generate_food(g, FOOD_NORMAL);
 
     halfdelay(2);
 }
@@ -45,11 +46,15 @@ void draw_game(Game* g) {
 
     mvprintw(WIN_Y-1, WIN_X+WIN_W-8, "       ");
     mvprintw(WIN_Y+WIN_H, WIN_X, "                   ");
-    mvprintw(WIN_Y-1, WIN_X, " Score : %d", g->score);
+    mvprintw(WIN_Y-1, WIN_X, " Score : %d | Time : %d", g->score, g->time);
+
     if(g->state == 2) mvprintw(WIN_Y-1, WIN_X+WIN_W-8, " Paused");
     if(g->state == 1) mvprintw(WIN_Y+WIN_H, WIN_X, " Game lost, press R");
+    
     refresh();
     wrefresh(g->win);
+    if(!g->state)
+        g->time = (g->time + 1) % TIME_CYClE;
 }
 
 void food_collision(Game* g) {
@@ -80,6 +85,7 @@ void self_collision(Game* g) {
 void restart(Game* g) {
     g->state = 0;
     g->score = 0;
+    g->time = 0;
     g->snake_length = 2;
     g->snake[0].x = WIN_W/2;
     g->snake[0].y = WIN_H/2;
@@ -87,24 +93,21 @@ void restart(Game* g) {
     g->snake[0].velY = 0;
 }
 
-void generate_food(Game* g) {
-    int x, y, flag = 1;
-    while(1) {
-        flag = 1;
+void generate_food(Game* g, FoodType type) {
+    int x, y;
 
+    while(1) {
         x = rand() % (WIN_W - 2) + 1;
         y = rand() % (WIN_H - 2) + 1;
 
-        for(int i=0;i<g->snake_length;++i) {
-            if(x == g->snake[i].x && y == g->snake[i].y) {
-                flag = 0;
-                break;
+        if(mvwinch(g->win, y, x) == ' ') {
+            if(type == FOOD_NORMAL) {
+                g->food.x = x;
+                g->food.y = y;
+            } else {
+                g->super_food.x = x;
+                g->super_food.y = y;
             }
-        }
-
-        if(flag) {
-            g->food.x = x;
-            g->food.y = y;
             break;
         }
     }
