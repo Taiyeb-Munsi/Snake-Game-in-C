@@ -1,4 +1,5 @@
 #include "snake.h"
+#include <unistd.h>
 
 int main(int argc, char* argv[]) {
     int run=1;
@@ -16,6 +17,7 @@ int main(int argc, char* argv[]) {
         if(!g.state) {
             update_position_all(&g);
             update_position(&g, ch);
+
             ++g.time;
             g.time %= TIME_CYClE;
         }
@@ -27,6 +29,8 @@ int main(int argc, char* argv[]) {
         food_collision(&g, FOOD_NORMAL);
         food_collision(&g, FOOD_SUPER);
         self_collision(&g);
+
+        usleep(g.delay);
     }
 
     endwin();

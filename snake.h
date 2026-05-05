@@ -25,7 +25,7 @@ typedef struct {
     WINDOW* win;
     Snake snake[MAX_L];
     Food food, super_food;
-    int snake_length, score, state, time;
+    int snake_length, score, state, time, delay;
     const char *difficulty;
     //state = 0 : game running, = 1 : game lost, = 2 : game paused
 } Game;

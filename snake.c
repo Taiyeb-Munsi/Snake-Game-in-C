@@ -12,14 +12,20 @@ void init_game(Game* g, char *d) {
     curs_set(0);
     srand(time(NULL));
 
+    // Window initialization
     g->win = newwin(WIN_H, WIN_W, WIN_Y, WIN_X);
-    g->snake_length = 2;
     g->score = 0;
     g->state = 0;
     g->time = 0;
+    g->difficulty = d;
+    g->delay = 150000;
+
+    // Snake initialization
+    g->snake_length = 2;
+
+    // Food initialization
     g->food.status = 0;
     g->super_food.status = 0;
-    g->difficulty = d;
 
     for(int i=0;i<g->snake_length;++i) {
         g->snake[i].x = (WIN_W/2)-i;
@@ -29,7 +35,7 @@ void init_game(Game* g, char *d) {
         g->snake[i].velY = 0;
     }
 
-    halfdelay(2);
+    nodelay(g->win, TRUE);
 }
 
 void draw_game(Game* g) {
@@ -47,7 +53,7 @@ void draw_game(Game* g) {
 
     mvprintw(WIN_Y-1, WIN_X+WIN_W-8, "       ");
     mvprintw(WIN_Y+WIN_H, WIN_X, "                   ");
-    mvprintw(WIN_Y-1, WIN_X, " Score : %d | Time : %02d", g->score, g->time);
+    mvprintw(WIN_Y-1, WIN_X, " Score : %04d", g->score);
 
     if(g->state == 2) mvprintw(WIN_Y-1, WIN_X+WIN_W-8, " Paused");
     if(g->state == 1) mvprintw(WIN_Y+WIN_H, WIN_X, " Game lost, press R");
@@ -75,9 +81,11 @@ void food_collision(Game* g, FoodType type) {
         ++g->score;
 
         g->food.status = 0;
+        if(g->score > 50000) g->delay -= 2000;
     } else if(type == FOOD_SUPER && (g->snake[0].x == g->super_food.x && g->snake[0].y == g->super_food.y)) {
         g->score += 5;
         g->super_food.status = 0;
+        if(g->score > 50000) g->delay -= 2000;
     }
 }
 
