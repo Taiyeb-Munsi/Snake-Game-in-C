@@ -7,8 +7,10 @@
 #define WIN_W 40
 #define WIN_X 10
 #define WIN_Y 10
+
 #define MAX_L (WIN_H - 2) * (WIN_W - 2)
 #define TIME_CYClE 100
+#define DELAY 150000
 
 typedef enum { FOOD_NORMAL, FOOD_SUPER } FoodType;
 

@@ -18,10 +18,12 @@ void init_game(Game* g, char *d) {
     g->state = 0;
     g->time = 0;
     g->difficulty = d;
-    g->delay = 150000;
+    g->delay = DELAY;
 
     // Snake initialization
     g->snake_length = 2;
+    start_color();
+    init_pair(1, 211, COLOR_BLACK);
 
     // Food initialization
     g->food.status = 0;
@@ -43,17 +45,19 @@ void draw_game(Game* g) {
     if(g->food.status) mvwprintw(g->win, g->food.y, g->food.x, "*");
     if(g->super_food.status) mvwprintw(g->win, g->super_food.y, g->super_food.x, "#");
     
+    wattron(g->win, COLOR_PAIR(1));
     for(int i=0;i<g->snake_length;++i)
         if(i == 0)
             mvwprintw(g->win, g->snake[i].y, g->snake[i].x, "@");
         else 
             mvwprintw(g->win, g->snake[i].y, g->snake[i].x, "o");
-    
+    wattroff(g->win, COLOR_PAIR(1));
+
     box(g->win,0,0);
 
     mvprintw(WIN_Y-1, WIN_X+WIN_W-8, "       ");
-    mvprintw(WIN_Y+WIN_H, WIN_X, "                   ");
-    mvprintw(WIN_Y-1, WIN_X, " Score : %04d", g->score);
+    mvprintw(WIN_Y+WIN_H, WIN_X, "                           ");
+    mvprintw(WIN_Y-1, WIN_X, " Score : %04d | Time : %04d | Delay : %07d", g->score, g->time, g->delay);
 
     if(g->state == 2) mvprintw(WIN_Y-1, WIN_X+WIN_W-8, " Paused");
     if(g->state == 1) mvprintw(WIN_Y+WIN_H, WIN_X, " Game lost, press R");
@@ -66,6 +70,10 @@ void draw_game(Game* g) {
         generate_food(g, FOOD_SUPER);
     if(g->time == 0)
         g->super_food.status = 0;
+
+    if(g->time%33 == 0 && g->delay > 50000) {
+        g->delay -= 2000;
+    }
 }
 
 void food_collision(Game* g, FoodType type) {
@@ -81,11 +89,9 @@ void food_collision(Game* g, FoodType type) {
         ++g->score;
 
         g->food.status = 0;
-        if(g->score > 50000) g->delay -= 2000;
     } else if(type == FOOD_SUPER && (g->snake[0].x == g->super_food.x && g->snake[0].y == g->super_food.y)) {
         g->score += 5;
         g->super_food.status = 0;
-        if(g->score > 50000) g->delay -= 2000;
     }
 }
 
@@ -102,6 +108,7 @@ void restart(Game* g) {
     g->state = 0;
     g->score = 0;
     g->time = 0;
+    g->delay = DELAY;
     g->snake_length = 2;
     g->super_food.status = 0;
     g->food.status = 0;
