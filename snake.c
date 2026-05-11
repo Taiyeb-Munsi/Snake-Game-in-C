@@ -57,7 +57,7 @@ void draw_game(Game* g) {
 
     mvprintw(WIN_Y-1, WIN_X+WIN_W-8, "       ");
     mvprintw(WIN_Y+WIN_H, WIN_X, "                           ");
-    mvprintw(WIN_Y-1, WIN_X, " Score : %04d | Time : %04d | Delay : %07d", g->score, g->time, g->delay);
+    mvprintw(WIN_Y-1, WIN_X, " Score : %04d", g->score);
 
     if(g->state == 2) mvprintw(WIN_Y-1, WIN_X+WIN_W-8, " Paused");
     if(g->state == 1) mvprintw(WIN_Y+WIN_H, WIN_X, " Game lost, press R");
